@@ -33,12 +33,17 @@ class OpinionsSpider(CrawlSpider):
         'Olaf Scholz’s endless dithering over Ukraine is playing into Putin’s hands'
         published = response.css("div.dcr-1kpcv08 span::text").get()
         'Sat 9 Mar 2024 20.07 CET'
-        content= text_combined = ''.join(response.css("#maincontent p::text, #maincontent span::text").getall())
+        joined_text = ''.join(response.css("div.dcr-1g5o3j6 p:not(footer) *::text").getall())
+
         """
-        guardian_article = ItemLoader(opinion=GuardianItem(), response=response)
-        guardian_article.add_css("headline", "h1fd")
+        guardian_article = ItemLoader(item=GuardianItem(), response=response)
+
+        guardian_article.add_css("headline", "h1")
         guardian_article.add_css("author", ".dcr-0 a")
         guardian_article.add_css("teaser", ".dcr-1qp23oo p")
         guardian_article.add_css("published", ".dcr-1kpcv08 span")
-        guardian_article.add_css("content", "#maincontent p, #maincontent span ")
+        guardian_article.add_css("content", "div.dcr-1g5o3j6:not(footer) ")
+        # guardian_article.add_css(
+        #     "content", "#maincontent p.dcr-vmkf2w, #maincontent p.dcr-vmkf2w span "
+        # )
         return guardian_article.load_item()

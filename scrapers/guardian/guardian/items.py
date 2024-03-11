@@ -3,10 +3,6 @@ from itemloaders.processors import TakeFirst, MapCompose, Join
 from w3lib.html import remove_tags
 
 
-def custom_function():
-    pass
-
-
 class GuardianItem(Item):
     headline = Field(
         input_processor=MapCompose(remove_tags), output_processor=TakeFirst()
@@ -21,6 +17,6 @@ class GuardianItem(Item):
         input_processor=MapCompose(remove_tags), output_processor=TakeFirst()
     )
     content = Field(
-        input_processor=MapCompose(remove_tags, custom_function),
+        input_processor=MapCompose(remove_tags),
         output_processor=Join(),
     )
