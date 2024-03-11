@@ -18,5 +18,5 @@ class GuardianItem(Item):
     )
     content = Field(
         input_processor=MapCompose(remove_tags),
-        output_processor=Join(),
+        output_processor=Join("\n"),
     )

@@ -42,8 +42,6 @@ class OpinionsSpider(CrawlSpider):
         guardian_article.add_css("author", ".dcr-0 a")
         guardian_article.add_css("teaser", ".dcr-1qp23oo p")
         guardian_article.add_css("published", ".dcr-1kpcv08 span")
-        guardian_article.add_css("content", "div.dcr-1g5o3j6:not(footer) ")
-        # guardian_article.add_css(
-        #     "content", "#maincontent p.dcr-vmkf2w, #maincontent p.dcr-vmkf2w span "
-        # )
+        guardian_article.add_css("content", "div.dcr-1g5o3j6 p ")
+
         return guardian_article.load_item()
