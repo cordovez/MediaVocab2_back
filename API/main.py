@@ -1,11 +1,11 @@
 from fastapi import FastAPI
-from fastapi.responses import HTMLResponse
-import json
 from contextlib import asynccontextmanager
 from db.db import init_db
 import uvicorn
+
+from routes.guardian_routes import guardian_router
+from models.opinion_model import OpinionRead
 from db.db import get_all
-from models.opinion_model import Opinion, OpinionRead
 
 
 @asynccontextmanager
@@ -17,9 +17,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 
-@app.get("/", response_model=list[OpinionRead])
-async def read_root():
-    return await get_all()
+app.include_router(guardian_router, tags=["The Guardian"])
 
 
 def main():

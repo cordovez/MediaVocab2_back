@@ -6,6 +6,7 @@ import json
 from pprint import pprint
 from bson import ObjectId
 from models.opinion_model import Opinion
+from fastapi import HTTPException
 
 load_dotenv()
 
@@ -39,22 +40,27 @@ async def add_many(items: list):
 
 
 async def get_one(item_id: str):
-    document = await guardian.find_one({"_id": ObjectId(item_id)})
-    pprint(document)
+
+    if document := await guardian.find_one({"_id": ObjectId(item_id)}):
+        document["_id"] = str(document["_id"])
+        return document
+    else:
+        raise HTTPException(status_code=404, detail="Opinion not found")
 
 
 async def get_all():
     cursor = guardian.find()
     documents = []
     for document in await cursor.to_list(length=100):
+        document["_id"] = str(document["_id"])
         documents.append(document)
     return documents
 
 
-async def get_5():
-    documents = await guardian.find()
-    for document in await documents.to_list(length=5):
-        pprint(document)
+# async def get_5():
+#     documents = await guardian.find()
+#     for document in await documents.to_list(length=5):
+#         pprint(document)
 
 
 async def get_these(item_id_list: list):
