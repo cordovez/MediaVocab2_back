@@ -1,6 +1,8 @@
 import scrapy
 from scrapy.spiders import CrawlSpider, Rule
+from scrapy.crawler import CrawlerProcess
 from scrapy.linkextractors import LinkExtractor
+from scrapy.utils.project import get_project_settings
 from datetime import datetime
 from ..items import GuardianItem
 from scrapy.loader import ItemLoader
@@ -14,7 +16,7 @@ class OpinionsSpider(CrawlSpider):
     name = "opinions"
     allowed_domains = ["theguardian.com"]
     start_urls = ["https://www.theguardian.com/uk/commentisfree/"]
-
+    custom_settings = {"FEEDS": {"opinions_crawled.json": {"format": "json"}}}
     rules = (
         Rule(LinkExtractor(allow=(rf"uk/commentisfree/",), deny=(r"-cartoon",))),
         Rule(

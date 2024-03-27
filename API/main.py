@@ -4,8 +4,6 @@ from db.db import init_db
 import uvicorn
 
 from routes.guardian_routes import guardian_router
-from models.opinion_model import OpinionRead
-from db.db import get_all
 
 
 @asynccontextmanager

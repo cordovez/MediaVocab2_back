@@ -50,7 +50,7 @@ async def get_one(item_id: str):
 
 async def add_one(item):
     result = await guardian.insert_one(item)
-    print("result %s" % repr(result.inserted_id))
+    print(f"result {repr(result.inserted_id)}")
     return result
 
 
