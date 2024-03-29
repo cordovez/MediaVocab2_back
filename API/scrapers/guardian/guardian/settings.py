@@ -1,3 +1,13 @@
+import os
+from dotenv import dotenv_values
+
+dotenv_values(".env")
+
+# MONGO_URI = "mongodb://localhost:27017/"
+# MONGO_DATABASE = "news_articles"
+MONGO_URI = os.getenv("MONGO_URI")
+MONGO_DATABASE = os.getenv("MONGO_DATABASE")
+
 # Scrapy settings for guardian project
 #
 # For simplicity, this file contains only settings considered important or
@@ -61,9 +71,9 @@ ROBOTSTXT_OBEY = False
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-# ITEM_PIPELINES = {
-#    "guardian.pipelines.GuardianPipeline": 300,
-# }
+ITEM_PIPELINES = {
+    "guardian.pipelines.MongoPipeline": 300,
+}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html

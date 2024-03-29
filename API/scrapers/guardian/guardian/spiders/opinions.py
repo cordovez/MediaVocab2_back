@@ -1,12 +1,10 @@
 import scrapy
 from scrapy.spiders import CrawlSpider, Rule
-from scrapy.crawler import CrawlerProcess
 from scrapy.linkextractors import LinkExtractor
-from scrapy.utils.project import get_project_settings
 from datetime import datetime
 from ..items import GuardianItem
 from scrapy.loader import ItemLoader
-
+from db.db import add_one
 
 month = datetime.now().strftime("%b").lower()
 year = datetime.now().strftime("%Y")
@@ -16,7 +14,7 @@ class OpinionsSpider(CrawlSpider):
     name = "opinions"
     allowed_domains = ["theguardian.com"]
     start_urls = ["https://www.theguardian.com/uk/commentisfree/"]
-    custom_settings = {"FEEDS": {"opinions_crawled.json": {"format": "json"}}}
+    # custom_settings = {"FEEDS": {"opinions_crawled.json": {"format": "json"}}}
     rules = (
         Rule(LinkExtractor(allow=(rf"uk/commentisfree/",), deny=(r"-cartoon",))),
         Rule(
@@ -45,5 +43,5 @@ class OpinionsSpider(CrawlSpider):
         guardian_article.add_css("teaser", ".dcr-1qp23oo p")
         guardian_article.add_css("published", ".dcr-1kpcv08 span")
         guardian_article.add_css("content", "div.dcr-1g5o3j6 p ")
-
+        # add_one(guardian_article.load_item())
         return guardian_article.load_item()

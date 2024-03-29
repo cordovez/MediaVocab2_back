@@ -7,22 +7,28 @@ from pprint import pprint
 from bson import ObjectId
 from models.opinion_model import Opinion
 from fastapi import HTTPException
+import logging
 
+logging.basicConfig(level=logging.DEBUG)
 load_dotenv()
 
-DB_URL = os.getenv("DATABASE")
+DB = os.getenv("MONGO_URI")
+# DB = os.getenv("DATABASE")
 
 
 async def init_db():
-    return motor.motor_asyncio.AsyncIOMotorClient(DB_URL)
+    return motor.motor_asyncio.AsyncIOMotorClient(DB)
 
 
-client = motor.motor_asyncio.AsyncIOMotorClient(DB_URL)
+logging.debug("Attempting to establish connection to the database...")
+
+client = motor.motor_asyncio.AsyncIOMotorClient(DB)
 news_articles = client.news_articles
 guardian = news_articles.the_guardian_opinions
+logging.debug("Connection to the database established successfully.")
 
-with open("the_guardian_opinions.json", "r") as file:
-    data = json.load(file)
+# with open("the_guardian_opinions.json", "r") as file:
+#     data = json.load(file)
 
 
 async def get_all():
@@ -48,7 +54,7 @@ async def get_one(item_id: str):
         raise HTTPException(status_code=404, detail="Opinion not found")
 
 
-async def add_one(item):
+async def add_one(item: dict):
     result = await guardian.insert_one(item)
     print(f"result {repr(result.inserted_id)}")
     return result
