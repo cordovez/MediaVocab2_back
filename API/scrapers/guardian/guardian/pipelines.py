@@ -41,7 +41,7 @@ class MongoPipeline:
         logging.debug("Attempting to insert to Mongo.")
 
         self.db[self.collection_name].insert_one(ItemAdapter(item).asdict())
-        logging.debug("Data added to MongoDB")
+        logging.debug("++++++++++++++Data added to MongoDB")
         return item
 
     # def process_item(self, item, spider):

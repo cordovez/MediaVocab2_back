@@ -16,7 +16,7 @@ class OpinionsSpider(CrawlSpider):
     start_urls = ["https://www.theguardian.com/uk/commentisfree/"]
     # custom_settings = {"FEEDS": {"opinions_crawled.json": {"format": "json"}}}
     rules = (
-        Rule(LinkExtractor(allow=(rf"uk/commentisfree/",), deny=(r"-cartoon",))),
+        Rule(LinkExtractor(allow=(r"uk/commentisfree/",), deny=(r"-cartoon",))),
         Rule(
             LinkExtractor(allow=(rf"{year}/{month}/",)),
             callback="parse_opinion",
@@ -43,5 +43,5 @@ class OpinionsSpider(CrawlSpider):
         guardian_article.add_css("teaser", ".dcr-1qp23oo p")
         guardian_article.add_css("published", ".dcr-1kpcv08 span")
         guardian_article.add_css("content", "div.dcr-1g5o3j6 p ")
-        # add_one(guardian_article.load_item())
+
         return guardian_article.load_item()
