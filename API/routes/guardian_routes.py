@@ -1,14 +1,9 @@
 from fastapi import APIRouter
 from models.opinion_model import OpinionRead
 from db.db import get_all, get_one, add_one
-from scrapy.crawler import CrawlerProcess
 
-from scrapers.guardian.guardian.spiders.opinions import OpinionsSpider
-from scrapy.utils.project import get_project_settings
 from scrapers.guardian.run_spider import run_guardian_spider
 
-# from subprocess import Popen, PIPE
-# from pathlib import Path
 
 guardian_router = APIRouter()
 

@@ -1,34 +1,24 @@
-# from guardian.spiders.opinions import OpinionsSpider
-from .guardian.spiders.opinions import OpinionsSpider
-from scrapy.crawler import CrawlerProcess, CrawlerRunner
-from scrapy.utils.project import get_project_settings
-from scrapy.utils.log import configure_logging
-from twisted.internet import reactor
+# To do: use a CrawlerProcess as specified by Scrapy
 
-import logging
-
-logging.basicConfig(level=logging.DEBUG)
+import subprocess
+import os
 
 
 def run_guardian_spider():
-    settings = get_project_settings()
-    settings.set("MONGO_URI", "mongodb://localhost:27017/")
-    settings.set("MONGO_DATABASE", "news_articles")
-    # process = CrawlerProcess(settings)
-    # process.crawl("OpinionsSpider")
-    # process.start()
+    os.chdir("scrapers/guardian")
 
-    configure_logging({"LOG_FORMAT": "%(levelname)s: %(message)s"})
-    runner = CrawlerRunner()
+    # Run the scrapy crawl command in the terminal
+    result = subprocess.run(
+        ["scrapy", "crawl", "opinions"], capture_output=True, text=True
+    )
 
-    d = runner.crawl(OpinionsSpider)
-    d.addBoth(lambda _: reactor.stop())
-    reactor.run()
-
-    print("+++++++++", settings.get("MONGO_URI"))
-    print("+++++++++", settings.get("MONGO_DATABASE"))
-    return {"message": "Crawling script process completed."}
-
-
-# if __name__ == "__main__":
-#     run_guardian_spider()
+    # Check if the command was successful
+    if result.returncode == 0:
+        # If successful, return the captured output
+        return {
+            "message": "Crawling script process completed.",
+            "output": result.stdout,
+        }
+    else:
+        # If not successful, return an error message
+        return {"error": "Error running scrapy crawl command.", "output": result}

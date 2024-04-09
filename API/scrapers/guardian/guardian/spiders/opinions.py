@@ -4,7 +4,6 @@ from scrapy.linkextractors import LinkExtractor
 from datetime import datetime
 from ..items import GuardianItem
 from scrapy.loader import ItemLoader
-from db.db import add_one
 
 month = datetime.now().strftime("%b").lower()
 year = datetime.now().strftime("%Y")
