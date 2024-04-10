@@ -8,7 +8,7 @@ from scrapers.guardian.run_spider import run_guardian_spider
 guardian_router = APIRouter()
 
 
-@guardian_router.get("/crawl")
+@guardian_router.get("/crawl", response_model=dict[str, str])
 async def crawl_and_save():
     return run_guardian_spider()
 
@@ -24,8 +24,3 @@ async def get_guardian_opinion(article_id: str):
     use "65f010b6b15eb75edca25a51" to test
     """
     return await get_one(article_id)
-
-
-@guardian_router.post("/add", response_model=OpinionRead)
-async def add_item_manually(item: dict):
-    return await add_one(item)

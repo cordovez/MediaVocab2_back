@@ -2,8 +2,13 @@ from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from db.db import init_db
 import uvicorn
-
+import logging
+import os
+from dotenv import load_dotenv
 from routes.guardian_routes import guardian_router
+
+load_dotenv()
+DB = os.getenv("MONGO_URI")
 
 
 @asynccontextmanager
@@ -23,4 +28,5 @@ def main():
 
 
 if __name__ == "__main__":
+    print("Connection: ", DB)
     main()

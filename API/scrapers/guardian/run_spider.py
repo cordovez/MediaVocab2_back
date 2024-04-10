@@ -4,7 +4,7 @@ import subprocess
 import os
 
 
-def run_guardian_spider():
+def run_guardian_spider() -> dict[str, str]:
     os.chdir("scrapers/guardian")
 
     # Run the scrapy crawl command in the terminal

@@ -1,11 +1,7 @@
 import motor.motor_asyncio
 from dotenv import load_dotenv
 import os
-import asyncio
-import json
-from pprint import pprint
 from bson import ObjectId
-from models.opinion_model import Opinion
 from fastapi import HTTPException
 import logging
 
@@ -17,14 +13,14 @@ DB = os.getenv("MONGO_URI")
 
 
 async def init_db():
-    return motor.motor_asyncio.AsyncIOMotorClient(DB)
+    return motor.motor_asyncio.AsyncIOMotorClient("mongodb://localhost:27017/")
 
 
-logging.debug("Attempting to establish connection to the database...")
+logging.debug(f"Attempting to establish connection to the database {DB}")
 
 client = motor.motor_asyncio.AsyncIOMotorClient(DB)
 news_articles = client.news_articles
-guardian = news_articles.the_guardian_opinions
+guardian = news_articles.opinions
 logging.debug("Connection to the database established successfully.")
 
 # with open("the_guardian_opinions.json", "r") as file:
