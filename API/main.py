@@ -6,6 +6,7 @@ import logging
 import os
 from dotenv import load_dotenv
 from routes.guardian_routes import guardian_router
+from routes.celery_routes import celery_router
 
 load_dotenv()
 DB = os.getenv("MONGO_URI")
@@ -21,6 +22,7 @@ app = FastAPI(lifespan=lifespan)
 
 
 app.include_router(guardian_router, tags=["The Guardian"])
+app.include_router(celery_router, prefix="/tasks", tags=["Tasks"])
 
 
 def main():

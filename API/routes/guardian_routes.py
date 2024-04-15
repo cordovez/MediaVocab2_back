@@ -8,9 +8,9 @@ from scrapers.guardian.run_spider import run_guardian_spider
 guardian_router = APIRouter()
 
 
-@guardian_router.get("/crawl", response_model=dict[str, str])
-async def crawl_and_save():
-    return run_guardian_spider()
+# @guardian_router.get("/crawl", response_model=dict[str, str])
+# async def crawl_and_save():
+#     return run_guardian_spider()
 
 
 @guardian_router.get("/", response_model=list[OpinionRead])
