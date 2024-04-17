@@ -8,6 +8,7 @@ import scrapy
 from scrapy.crawler import CrawlerRunner
 from scrapy.utils.log import configure_logging
 from scrapers.guardian.guardian.spiders.opinions import OpinionsSpider
+import subprocess
 
 load_dotenv()
 BROKER = os.getenv("CELERY_BROKER_URL")
@@ -24,11 +25,12 @@ def sample_add(a: int, b: int) -> int:
     return a + b
 
 
-@celery_app.task
+# @celery_app.task
 def crawl_the_guardian_opinions() -> dict[str, str]:
-    configure_logging({"LOG_FORMAT": "%(levelname)s: %(message)s"})
-    runner = CrawlerRunner()
-
-    d = runner.crawl(OpinionsSpider)
-    d.addBoth(lambda _: reactor.stop())
-    reactor.run()  # the script will block here until the crawling is finished
+    os.chdir("API/scrapers/guardian")
+    result = subprocess.run(
+        ["scrapy", "crawl", "opinions"], capture_output=True, text=True
+    )
+    print(result.stdout)
+    return {"new": result.stdout}
+    # print({"new": os.getcwd()})

@@ -1,18 +1,17 @@
-# import os
+import os
+from dotenv import dotenv_values
 
-# from dotenv import dotenv_values
+dotenv_values(".env")
 
-# dotenv_values(".env")
-
-# MONGO_URI = os.getenv("MONGO_URI")
-# MONGO_DATABASE = os.getenv("MONGO_DATABASE")
+MONGO_URI = os.getenv("MONGO_URI")
+MONGO_DATABASE = os.getenv("MONGO_DATABASE")
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 
-# ITEM_PIPELINES = {
-#     "guardian.pipelines.MongoDBPipeline": 300,
-# }
+ITEM_PIPELINES = {
+    "guardian.pipelines.MongoDBPipeline": 300,
+}
 
 # Scrapy settings for guardian project
 #

@@ -13,7 +13,7 @@ class MongoDBPipeline:
     def from_crawler(cls, crawler):
         return cls(
             mongo_uri=crawler.settings.get("MONGODB_URI"),
-            mongo_db=crawler.settings.get("MONGODB_DATABASE", "items"),
+            mongo_db=crawler.settings.get("MONGODB_DATABASE", "the_guardian"),
         )
 
     def open_spider(self, spider):

@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from tasks import sample_add, celery_app, crawl_the_guardian_opinions
+from tasks import celery_app, crawl_the_guardian_opinions
 from dotenv import load_dotenv
 import os
 from celery.result import AsyncResult
@@ -21,8 +21,11 @@ celery_router = APIRouter()
 
 @celery_router.get("/crawl", response_model=dict[str, str])
 async def crawl_and_save():
-    result = crawl_the_guardian_opinions.delay().id
-    return {"task_id": result}
+    # result = crawl_the_guardian_opinions.delay().id
+    # return {"task_id": result}
+    result = crawl_the_guardian_opinions()
+    # result = crawl_the_guardian_opinions.delay().result
+    return result
 
 
 @celery_router.get("/crawl-status")
