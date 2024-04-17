@@ -2,13 +2,7 @@ import os
 import subprocess
 from dotenv import load_dotenv
 from celery import Celery
-from scrapers.guardian.run_spider import run_guardian_spider
-from twisted.internet import reactor
-import scrapy
-from scrapy.crawler import CrawlerRunner
-from scrapy.utils.log import configure_logging
-from scrapers.guardian.guardian.spiders.opinions import OpinionsSpider
-import subprocess
+from db.db import delete_all
 
 load_dotenv()
 BROKER = os.getenv("CELERY_BROKER_URL")
@@ -21,16 +15,17 @@ print("CELERY_BACKEND:", BACKEND)
 
 
 @celery_app.task
-def sample_add(a: int, b: int) -> int:
-    return a + b
-
-
-# @celery_app.task
-def crawl_the_guardian_opinions() -> dict[str, str]:
-    os.chdir("API/scrapers/guardian")
-    result = subprocess.run(
-        ["scrapy", "crawl", "opinions"], capture_output=True, text=True
-    )
-    print(result.stdout)
-    return {"new": result.stdout}
-    # print({"new": os.getcwd()})
+async def crawl_the_guardian_opinions() -> dict[str, str]:
+    try:
+        deleted = await delete_all()
+        if deleted:
+            os.chdir("API/scrapers/guardian")
+            result = subprocess.run(
+                ["scrapy", "crawl", "opinions"], capture_output=True, text=True
+            )
+            if result.returncode == 0:
+                return {"message": "sucess"}
+            else:
+                return {"message": "error", "output": result.stderr}
+    except Exception as e:
+        return {"message": "error", "exception": str(e)}
