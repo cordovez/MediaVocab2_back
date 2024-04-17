@@ -1,5 +1,6 @@
 import os
 import subprocess
+import asyncio
 from dotenv import load_dotenv
 from celery import Celery
 from db.db import delete_all
@@ -14,7 +15,7 @@ print("CELERY_BROKER_URL:", BROKER)
 print("CELERY_BACKEND:", BACKEND)
 
 
-@celery_app.task
+@celery_app.task(task_serializer="json")
 async def crawl_the_guardian_opinions() -> dict[str, str]:
     try:
         deleted = await delete_all()
