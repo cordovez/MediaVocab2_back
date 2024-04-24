@@ -25,7 +25,7 @@ class OpinionsSpider(CrawlSpider):
     def parse_opinion(self, response):
         """headline = response.css("h1::text").get()
         'Germany’s reputation for decisive leadership is in tatters when Europe needs it most'
-        author = response.css("div.dcr-0 a::text").get()
+        author = response.css("div.dcr-0 a[rel='author']::text").get()
         'Simon Tisdall'
         teaser= response.css("div.dcr-1kpcv08::text").get()
         response.css(".dcr-1qp23oo p::text").get()
@@ -33,14 +33,15 @@ class OpinionsSpider(CrawlSpider):
         published = response.css("div.dcr-1kpcv08 span::text").get()
         'Sat 9 Mar 2024 20.07 CET'
         joined_text = ''.join(response.css("div.dcr-1g5o3j6 p:not(footer) *::text").getall())
-
+        canonical_url = response.css('link[rel="canonical"]::attr(href)').get()
         """
         guardian_article = ItemLoader(item=GuardianItem(), response=response)
 
         guardian_article.add_css("headline", "h1")
-        guardian_article.add_css("author", ".dcr-0 a")
+        guardian_article.add_css("author", " a[rel='author']")
         guardian_article.add_css("teaser", ".dcr-1qp23oo p")
-        guardian_article.add_css("published", ".dcr-1kpcv08 span")
+        guardian_article.add_css("published", "span.dcr-u0h1qy")
         guardian_article.add_css("content", "div.dcr-1g5o3j6 p ")
+        guardian_article.add_css("url", "link[rel='canonical']::attr(href)")
 
         return guardian_article.load_item()

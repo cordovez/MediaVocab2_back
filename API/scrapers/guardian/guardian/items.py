@@ -20,3 +20,7 @@ class GuardianItem(Item):
         input_processor=MapCompose(remove_tags),
         output_processor=Join("\n"),
     )
+    url = Field(
+        input_processor=MapCompose(remove_tags),
+        output_processor=TakeFirst(),
+    )
