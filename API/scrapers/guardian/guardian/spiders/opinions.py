@@ -33,7 +33,7 @@ class OpinionsSpider(CrawlSpider):
         published = response.css("div.dcr-1kpcv08 span::text").get()
         'Sat 9 Mar 2024 20.07 CET'
         joined_text = ''.join(response.css("div.dcr-1g5o3j6 p:not(footer) *::text").getall())
-
+        canonical_url = response.css('link[rel="canonical"]::attr(href)').get()
         """
         guardian_article = ItemLoader(item=GuardianItem(), response=response)
 
@@ -42,5 +42,6 @@ class OpinionsSpider(CrawlSpider):
         guardian_article.add_css("teaser", ".dcr-1qp23oo p")
         guardian_article.add_css("published", "span.dcr-u0h1qy")
         guardian_article.add_css("content", "div.dcr-1g5o3j6 p ")
+        guardian_article.add_css("url", "link[rel='canonical']::attr(href)")
 
         return guardian_article.load_item()

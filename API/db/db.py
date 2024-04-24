@@ -4,6 +4,7 @@ import os
 from bson import ObjectId
 from fastapi import HTTPException
 import logging
+from models.analysis_model import TextAnalysis
 
 logging.basicConfig(level=logging.DEBUG)
 load_dotenv()
@@ -21,7 +22,8 @@ logging.debug(f"Attempting to establish connection to the database {URI}")
 
 client = motor.motor_asyncio.AsyncIOMotorClient(URI)
 news_organization = client[DB]
-collection = news_organization.opinions
+opinions_collection = news_organization.opinions
+analysis_collection = news_organization.analysis
 
 logging.debug("Connection to the database established successfully.")
 
@@ -29,7 +31,7 @@ logging.debug("Connection to the database established successfully.")
 async def get_all() -> list:
 
     try:
-        cursor = collection.find()
+        cursor = opinions_collection.find()
         documents = []
         for document in await cursor.to_list(length=100):
             document["_id"] = str(document["_id"])
@@ -43,21 +45,48 @@ async def get_all() -> list:
 
 async def get_one(item_id: str) -> dict:
 
-    if document := await collection.find_one({"_id": ObjectId(item_id)}):
+    if document := await opinions_collection.find_one({"_id": ObjectId(item_id)}):
         document["_id"] = str(document["_id"])
         return document
     else:
         raise HTTPException(status_code=404, detail="Opinion not found")
 
 
+async def get_one_analysis(item_id: str) -> dict:
+
+    if document := await analysis_collection.find_one({"article_id": item_id}):
+        document["_id"] = str(document["_id"])
+        return document
+    else:
+        raise HTTPException(status_code=404, detail="Analysis not found")
+
+
 async def delete_all() -> bool:
 
-    await collection.delete_many({})
-    count = await collection.count_documents({})
+    await opinions_collection.delete_many({})
+    count = await opinions_collection.count_documents({})
     if count == 0:
         return True
 
 
-# used for running in the terminal as __main__
-# loop = asyncio.get_event_loop()
-# loop.run_until_complete(get_one("65f010b6b15eb75edca25a53"))
+async def add_one(article_id: str, data: dict) -> str:
+    try:
+        document_found = await analysis_collection.find_one({"article_id": article_id})
+        if document_found:
+            print("Document already exists")
+            return None
+
+        # Ensure the data is converted to a dictionary
+        if isinstance(data, TextAnalysis):
+            document = data.model_dump
+        else:
+            document = data
+
+        result = await analysis_collection.insert_one(document)
+        print(f"Inserted document ID: {result.inserted_id}")
+
+        return f"Inserted document ID: {result.inserted_id}"
+
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return e
