@@ -9,6 +9,7 @@ class Opinion(BaseModel):
     author: Optional[str] = None
     published: Optional[str] = None
     content: Optional[str] = None
+    has_analysis: bool = False
 
 
 class OpinionRead(Opinion):
@@ -21,6 +22,7 @@ class OpinionRead(Opinion):
         #         json_encoders = {ObjectId: str}
         json_schema_extra = {
             "example": {
+                "has_analysis": "true",
                 "id": "65f010b6b15eb75edca25a51",
                 "headline": "Opinion Headline",
                 "teaser": "Opinion Teaser",

@@ -61,12 +61,22 @@ async def get_one_analysis(item_id: str) -> dict:
         raise HTTPException(status_code=404, detail="Analysis not found")
 
 
-async def delete_all() -> bool:
-
+async def delete_all() -> None:
     await opinions_collection.delete_many({})
-    count = await opinions_collection.count_documents({})
-    if count == 0:
-        return True
+    await analysis_collection.delete_many({})
+
+
+async def update_one(item_id: str, dict_data: dict) -> dict:
+    result = await opinions_collection.update_one(
+        {"_id": ObjectId(item_id)}, {"$set": dict_data}
+    )
+    print("modified items:", result.modified_count)
+    if result.modified_count == 0:
+        print({"message": "update failed"})
+        return {"message": "update failed"}
+    new_value = await opinions_collection.find_one({"_id": ObjectId(item_id)})
+    print({"has_analysis": new_value.get("has_analysis")})
+    return {"has_analysis": new_value.get("has_analysis")}
 
 
 async def add_one(article_id: str, data: dict) -> str:
