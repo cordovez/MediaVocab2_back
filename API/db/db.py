@@ -62,8 +62,12 @@ async def get_one_analysis(item_id: str) -> dict:
 
 
 async def delete_all() -> None:
-    await opinions_collection.delete_many({})
-    await analysis_collection.delete_many({})
+    count = await opinions_collection.count_documents({})
+    if count != 0:
+        await opinions_collection.delete_many({})
+        await analysis_collection.delete_many({})
+        print("opinions count after: ", await opinions_collection.count_documents({}))
+        print("analysis count after: ", await analysis_collection.count_documents({}))
 
 
 async def update_one(item_id: str, dict_data: dict) -> dict:
