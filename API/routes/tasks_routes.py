@@ -1,9 +1,9 @@
 from fastapi import APIRouter, HTTPException
 from spacy_tasks import create_text_analysis
 from dotenv import load_dotenv
-from db.db import update_one
+from db.db import update_one_opinions_document
 import os
-from db.db import add_one
+from db.db import add_one_to_analysis_collection
 
 load_dotenv()
 BROKER = os.getenv("CELERY_BROKER_URL")
@@ -16,12 +16,9 @@ tasks_router = APIRouter()
 @tasks_router.post("/analyse/{id}")
 async def analyse_article(id: str):
     analysis = await create_text_analysis(id)
-    inserted = await add_one(analysis["article_id"], analysis)
+    response = await add_one_to_analysis_collection(analysis["article_id"], analysis)
+    if not response:
+        return False
     update_data = {"has_analysis": True}
-    update_data = await update_one(id, update_data)
-    # TO do: when analysis is made, find original article and change "has_analysis" to True, maybe add analysis id?
-
-    if inserted:
-        return update_data
-    else:
-        raise HTTPException(status_code=400, detail="Document already exists")
+    updated = await update_one_opinions_document(id, update_data)
+    return updated.modified_count

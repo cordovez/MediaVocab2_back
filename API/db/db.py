@@ -28,12 +28,16 @@ analysis_collection = news_organization.analysis
 logging.debug("Connection to the database established successfully.")
 
 
-async def get_all() -> list:
+async def get_count() -> int:
+    return await opinions_collection.count_documents({})
+
+
+async def get_all(limit: int = 5, skip: int = 0) -> list:
 
     try:
         cursor = opinions_collection.find()
         documents = []
-        for document in await cursor.to_list(length=100):
+        for document in await cursor.limit(limit).skip(skip).to_list(length=100):
             document["_id"] = str(document["_id"])
             documents.append(document)
         return documents
@@ -70,7 +74,7 @@ async def delete_all() -> None:
         print("analysis count after: ", await analysis_collection.count_documents({}))
 
 
-async def update_one(item_id: str, dict_data: dict) -> dict:
+async def update_one_opinions_document(item_id: str, dict_data: dict) -> dict:
     result = await opinions_collection.update_one(
         {"_id": ObjectId(item_id)}, {"$set": dict_data}
     )
@@ -83,7 +87,10 @@ async def update_one(item_id: str, dict_data: dict) -> dict:
     return {"has_analysis": new_value.get("has_analysis")}
 
 
-async def add_one(article_id: str, data: dict) -> str:
+async def add_one_to_analysis_collection(article_id: str, data: dict) -> str:
+    """
+    Inserts new document into db
+    """
     try:
         document_found = await analysis_collection.find_one({"article_id": article_id})
         if document_found:
@@ -99,7 +106,7 @@ async def add_one(article_id: str, data: dict) -> str:
         result = await analysis_collection.insert_one(document)
         print(f"Inserted document ID: {result.inserted_id}")
 
-        return f"Inserted document ID: {result.inserted_id}"
+        return result.inserted_id
 
     except Exception as e:
         print(f"An error occurred: {e}")
